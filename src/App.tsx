@@ -1,36 +1,23 @@
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { type BaseError, useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
 import { abi } from './abi'
-import { parseEther } from 'viem'
 
 function App() {
   const account = useAccount()
   const { connectors, connect, status, error:errorConnect } = useConnect()
   const { disconnect } = useDisconnect()
   const { data: hash, error, isPending, writeContract } = useWriteContract()
-  const address = '0x69D349E2009Af35206EFc3937BaD6817424729F7'
+  const address = '0x8903412ac24281421f1D94Fe27De56c0433f3d1f'
 
-  async function deposit(e: React.FormEvent<HTMLFormElement>) {
+  async function redeemBond(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const formData = new FormData(e.target as HTMLFormElement)
-    const amount = formData.get('amountWrap') as string
+    const tokenId = formData.get('tokenId') as string
     writeContract({
       address: address,
       abi,
-      functionName: 'deposit',
-      value: parseEther(amount),
-    })
-  }
-
-  async function withdraw(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const formData = new FormData(e.target as HTMLFormElement)
-    const amount = formData.get('amountUnwrap') as string
-    writeContract({
-      address: address,
-      abi,
-      functionName: 'withdraw',
-      args: [parseEther(amount)],
+      functionName: 'redeemBond',
+      args: [BigInt(tokenId)],
     })
   }
 
@@ -75,18 +62,10 @@ function App() {
       </div>
 
       <div>
-        <h2>Wrap</h2>
-        <form onSubmit={deposit}>
-          <input name="amountWrap" type="number" defaultValue="0.1" step="0.000000000000000001" required />
-          <button disabled={isPending} type="submit">{isPending ? 'Confirming...' : 'Wrap'}</button>
-        </form>
-      </div>
-
-      <div>
-        <h2>Unwrap</h2>
-        <form onSubmit={withdraw}>
-          <input name="amountUnwrap" type="number" defaultValue="0.1" step="0.000000000000000001" required />
-          <button disabled={isPending} type="submit">{isPending ? 'Confirming...' : 'Unwrap'}</button>
+        <h2>Redeem</h2>
+        <form onSubmit={redeemBond}>
+          <input name="tokenId" type="number" defaultValue="0" required />
+          <button disabled={isPending} type="submit">{isPending ? 'Confirming...' : 'Redeem'}</button>
         </form>
       </div>
 
