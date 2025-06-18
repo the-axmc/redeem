@@ -1,10 +1,10 @@
 import { http, createConfig } from "wagmi";
-import { injected } from "wagmi/connectors";
+import { injected, valora } from "wagmi/connectors";
 import { celo } from "viem/chains";
 
 export const config = createConfig({
   chains: [celo],
-  connectors: [injected()],
+  connectors: [injected(), valora({ projectId: "WALLETCONNECT_PROJECT_ID" })],
   transports: {
     [celo.id]: http(),
   },
